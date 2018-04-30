@@ -1,4 +1,6 @@
 require "bundler/setup"
+require 'rspec/given'
+require 'pry'
 require "immutable/hash"
 
 RSpec.configure do |config|
