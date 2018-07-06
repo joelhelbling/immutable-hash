@@ -74,7 +74,7 @@ RSpec.describe Immutable::Hash do
         { name: 'Gandalf', title: 'The Grey', nickname: 'Wizard' }
       end
 
-      When(:newhashlike) { hashlike.prune([:title]) }
+      When(:newhashlike) { hashlike.prune(:title) }
 
       context '#[]' do
         Then { newhashlike[:name] == 'Gandalf' }
@@ -88,6 +88,31 @@ RSpec.describe Immutable::Hash do
 
       context '#values' do
         Then { newhashlike.values == ['Gandalf', 'Wizard'] }
+      end
+    end
+
+    describe '#undo' do
+      Given(:initial_state) do
+        { name: 'Gandalf', title: 'The Grey' }
+      end
+
+      When(:newhashlike) { hashlike.undo }
+
+      context 'undo merge' do
+        Given(:newhashlike) { hashlike.merge horse: 'Shadowfax' }
+
+        When(:undohashlike) { newhashlike.undo }
+
+        Then { undohashlike[:horse].nil? }
+        Then { undohashlike.keys == %i[name title] }
+      end
+
+      context 'undo delete' do
+        Given(:newhashlike) { hashlike.prune(:title) }
+        When(:undohashlike) { newhashlike.undo }
+
+        Then { undohashlike.keys == %i[name title] }
+        Then { undohashlike[:title] == 'The Grey' }
       end
     end
 

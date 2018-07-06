@@ -38,6 +38,10 @@ module Immutable
       end
     end
 
+    def undo
+      @base
+    end
+
     def []=(key, value)
       raise HashMutationException.new(:[]=)
     end
